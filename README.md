@@ -1,7 +1,7 @@
 # RECLAIM — Risk-Aware Expected-Value Revenue Recovery Engine
 
 ## Live Demo
-reclaim-ai-agent.vercel.app
+https://reclaim-ai-agent.vercel.app
 
 ## Overview
 
