@@ -39,7 +39,6 @@ def generate_historical_data(n_samples: int = 2000, seed: int = 42) -> pd.DataFr
 
         action = np.random.choice(ACTIONS)
 
-        # Realistic recovery probability function per action & context
         base_p = 0.10
         if action == 'RETRY':
             if failure_reason == 'BANK_TIMEOUT':
@@ -76,7 +75,6 @@ def generate_historical_data(n_samples: int = 2000, seed: int = 42) -> pd.DataFr
         elif action == 'STOP':
             base_p = 0.0
 
-        # Adjust for risk score
         base_p = max(0.0, min(0.95, base_p * (1.0 - (risk_score * 0.5))))
         success = 1 if np.random.rand() < base_p else 0
 

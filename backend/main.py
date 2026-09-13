@@ -15,7 +15,6 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Enable CORS for frontend Vite application
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -24,14 +23,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Global State Container
 class State:
     def __init__(self):
         self.decision_engine = DecisionEngine()
         self.razorpay_client = RazorpayRecoveryClient()
         self.batch: List[dict] = []
-        self.evaluations: dict = {} # txn_id -> evaluation dict
-        self.executed_actions: dict = {} # txn_id -> execution result dict
+        self.evaluations: dict = {}
+        self.executed_actions: dict = {}
         self.initialize()
 
     def initialize(self):
@@ -57,7 +55,7 @@ class CounterfactualRequest(BaseModel):
     time_of_day: int = 14
 
 class OverrideRequest(BaseModel):
-    action: str # RETRY, REMINDER, ESCALATE, STOP
+    action: str
     notes: Optional[str] = "Human manager override"
 
 @app.get("/")
@@ -134,7 +132,6 @@ def get_dashboard_stats():
         if eval_res['requires_human_approval']:
             human_review_required += 1
 
-    # Cause distribution
     causes = {}
     for t in state.batch:
         c = t['failure_reason']
@@ -178,7 +175,6 @@ def list_transactions(
     end = start + limit
     paginated = filtered[start:end]
 
-    # Attach evaluation detail if available
     result_list = []
     for t in paginated:
         item = dict(t)
@@ -216,9 +212,6 @@ def get_transaction_detail(txn_id: str):
 
 @app.post("/api/transactions/{txn_id}/execute")
 def execute_action(txn_id: str):
-    """
-    Executes the RECLAIM recommended action (e.g. Razorpay Payment Link or Retry trigger).
-    """
     txn = next((t for t in state.batch if t['transaction_id'] == txn_id), None)
     if not txn:
         raise HTTPException(status_code=404, detail="Transaction not found")
@@ -252,7 +245,7 @@ def execute_action(txn_id: str):
             "status": "QUEUED_FOR_AGENT",
             "message": "Assigned to Merchant Support Ops dashboard for high-touch recovery."
         }
-    else: # STOP
+    else:
         execution_result = {
             "action_executed": "HALTED_NO_ACTION",
             "status": "STOPPED",
@@ -286,9 +279,6 @@ def override_action(txn_id: str, req: OverrideRequest):
 
 @app.post("/api/simulator/evaluate")
 def evaluate_counterfactual(req: CounterfactualRequest):
-    """
-    Counterfactual Simulator endpoint: Evaluates custom input variables dynamically.
-    """
     txn_mock = {
         'transaction_id': 'sim_test_001',
         'amount': req.amount,

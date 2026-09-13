@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, ShieldCheck, AlertTriangle, ExternalLink, Zap, CheckCircle2, RefreshCw, Lock, ArrowRight, UserCheck } from 'lucide-react';
+import { X, ExternalLink, Zap, CheckCircle2, RefreshCw, Lock, UserCheck, Search, Activity } from 'lucide-react';
 
 export default function ExplainabilityDrawer({ transactionDetail, onClose, onExecuteAction, onOverrideAction }) {
   if (!transactionDetail) return null;
@@ -31,9 +31,9 @@ export default function ExplainabilityDrawer({ transactionDetail, onClose, onExe
       bottom: 0,
       width: '100%',
       maxWidth: '520px',
-      background: '#0a0f1d',
-      borderLeft: '1px solid rgba(255, 255, 255, 0.12)',
-      boxShadow: '-12px 0 40px rgba(0,0,0,0.8)',
+      background: '#0B0E14',
+      borderLeft: '1px solid #1E2430',
+      boxShadow: '-16px 0 40px rgba(0,0,0,0.9)',
       zIndex: 1000,
       overflowY: 'auto',
       padding: '24px',
@@ -41,71 +41,67 @@ export default function ExplainabilityDrawer({ transactionDetail, onClose, onExe
       flexDirection: 'column'
     }}>
       
-      {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', borderBottom: '1px solid var(--border-color)', paddingBottom: '16px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', borderBottom: '1px solid #1E2430', paddingBottom: '16px' }}>
         <div>
-          <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+          <div style={{ fontSize: '0.73rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>
             Decision Audit Trail
           </div>
-          <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#fff' }} className="font-mono">
+          <h2 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#E8EAED', marginTop: '2px' }} className="font-mono tabular-nums">
             {txn.transaction_id}
           </h2>
         </div>
-        <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '6px' }}>
-          <X size={22} />
+        <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: '6px' }}>
+          <X size={18} />
         </button>
       </div>
 
-      {/* Transaction Snapshot */}
-      <div className="glass-panel p-4 mb-5" style={{ marginBottom: '20px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+      <div className="fintech-card" style={{ padding: '18px', marginBottom: '20px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
           <div>
-            <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>Amount at Risk</span>
-            <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#fff' }} className="font-mono">
+            <span style={{ fontSize: '0.73rem', color: 'var(--text-secondary)' }}>Amount at Risk</span>
+            <div style={{ fontSize: '1.3rem', fontWeight: 800, color: '#E8EAED', marginTop: '2px' }} className="font-mono tabular-nums">
               ₹{txn.amount.toLocaleString('en-IN')}
             </div>
           </div>
           <div>
-            <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>Customer LTV</span>
-            <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#60a5fa' }} className="font-mono">
+            <span style={{ fontSize: '0.73rem', color: 'var(--text-secondary)' }}>Customer LTV</span>
+            <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#38BDF8', marginTop: '2px' }} className="font-mono tabular-nums">
               ₹{txn.historical_ltv.toLocaleString('en-IN')}
             </div>
           </div>
           <div>
-            <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>Failure Reason</span>
-            <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#fca5a5' }}>
-              {txn.failure_reason.replace('_', ' ')}
+            <span style={{ fontSize: '0.73rem', color: 'var(--text-secondary)' }}>Failure Reason</span>
+            <div style={{ fontSize: '0.82rem', fontWeight: 600, color: '#E8EAED', marginTop: '2px' }}>
+              {txn.failure_reason.replace(/_/g, ' ')}
             </div>
           </div>
           <div>
-            <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>Risk Score</span>
-            <div style={{ fontSize: '0.85rem', fontWeight: 700, color: txn.risk_score > 0.6 ? '#f87171' : '#34d399' }}>
+            <span style={{ fontSize: '0.73rem', color: 'var(--text-secondary)' }}>Risk Score</span>
+            <div style={{ fontSize: '0.82rem', fontWeight: 700, color: txn.risk_score > 0.6 ? '#E8546B' : '#2DD4A7', marginTop: '2px' }} className="tabular-nums">
               {txn.risk_score} {txn.risk_score > 0.6 ? '(High Risk)' : '(Safe)'}
             </div>
           </div>
         </div>
       </div>
 
-      {/* Diagnosis Summary Box */}
-      <div style={{ background: 'rgba(59, 130, 246, 0.08)', border: '1px solid rgba(59, 130, 246, 0.2)', borderRadius: '12px', padding: '16px', marginBottom: '20px' }}>
-        <h4 style={{ fontSize: '0.85rem', fontWeight: 700, color: '#60a5fa', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-          🔎 RECLAIM Diagnostic Root Cause
+      <div style={{ background: 'rgba(45, 212, 167, 0.04)', border: '1px solid rgba(45, 212, 167, 0.2)', borderRadius: '6px', padding: '16px', marginBottom: '20px' }}>
+        <h4 style={{ fontSize: '0.82rem', fontWeight: 700, color: '#2DD4A7', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '6px', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+          <Search size={14} /> Diagnostic Root Cause
         </h4>
-        <p style={{ fontSize: '0.85rem', color: '#e2e8f0', marginBottom: '8px' }}>
+        <p style={{ fontSize: '0.85rem', color: '#E8EAED', marginBottom: '8px', lineHeight: 1.4 }}>
           {evalRes.diagnosis?.summary}
         </p>
-        <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+        <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
           <strong>Strategy:</strong> {evalRes.diagnosis?.recommended_strategy}
         </div>
       </div>
 
-      {/* Expected Value Matrix */}
-      <div className="glass-panel p-4 mb-5" style={{ marginBottom: '20px' }}>
-        <h4 style={{ fontSize: '0.9rem', fontWeight: 700, color: '#fff', marginBottom: '14px' }}>
-          📊 Counterfactual Expected Value Comparison
+      <div className="fintech-card" style={{ padding: '18px', marginBottom: '20px' }}>
+        <h4 style={{ fontSize: '0.85rem', fontWeight: 700, color: '#E8EAED', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <Activity size={15} color="#2DD4A7" /> Counterfactual Expected Value Comparison
         </h4>
         
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
           {Object.keys(evData).map((action) => {
             const item = evData[action];
             const isSelected = action === evalRes.final_action;
@@ -115,25 +111,25 @@ export default function ExplainabilityDrawer({ transactionDetail, onClose, onExe
               <div
                 key={action}
                 style={{
-                  background: isSelected ? 'rgba(16, 185, 129, 0.12)' : 'rgba(255, 255, 255, 0.03)',
-                  border: isSelected ? '1px solid #10b981' : '1px solid var(--border-color)',
-                  borderRadius: '10px',
+                  background: isSelected ? 'rgba(45, 212, 167, 0.08)' : 'rgba(255, 255, 255, 0.02)',
+                  border: isSelected ? '1px solid #2DD4A7' : '1px solid var(--border-subtle)',
+                  borderRadius: '6px',
                   padding: '12px'
                 }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                  <span style={{ fontWeight: 700, fontSize: '0.85rem', color: isSelected ? '#34d399' : '#fff' }}>
-                    {action} {isSelected && '✓ (RECLAIM Selected)'}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                  <span style={{ fontWeight: 700, fontSize: '0.82rem', color: isSelected ? '#2DD4A7' : '#E8EAED' }}>
+                    {action} {isSelected && '(RECLAIM Selected)'}
                   </span>
-                  <span style={{ fontSize: '0.9rem', fontWeight: 800, color: isSelected ? '#34d399' : 'var(--text-muted)' }} className="font-mono">
+                  <span style={{ fontSize: '0.85rem', fontWeight: 800, color: isSelected ? '#2DD4A7' : 'var(--text-secondary)' }} className="font-mono tabular-nums">
                     EV: ₹{Math.round(item.expected_value).toLocaleString('en-IN')}
                   </span>
                 </div>
                 
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--text-dim)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.73rem', color: 'var(--text-secondary)' }}>
                   <span>P(Recovery): {pPct}%</span>
                   <span>Action Cost: ₹{item.cost}</span>
-                  {item.penalty > 0 && <span style={{ color: '#f87171' }}>Friction Penalty: -₹{item.penalty}</span>}
+                  {item.penalty > 0 && <span style={{ color: '#E8546B' }}>Friction Penalty: -₹{item.penalty}</span>}
                 </div>
               </div>
             );
@@ -141,54 +137,52 @@ export default function ExplainabilityDrawer({ transactionDetail, onClose, onExe
         </div>
       </div>
 
-      {/* Guardrail Status Checklist */}
-      <div className="glass-panel p-4 mb-5" style={{ marginBottom: '20px' }}>
-        <h4 style={{ fontSize: '0.9rem', fontWeight: 700, color: '#fff', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <Lock size={16} color="#fbbf24" /> Merchant Policy Guardrails
+      <div className="fintech-card" style={{ padding: '18px', marginBottom: '20px' }}>
+        <h4 style={{ fontSize: '0.85rem', fontWeight: 700, color: '#E8EAED', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <Lock size={15} color="#E8A23D" /> Merchant Policy Guardrails
         </h4>
         
-        <div style={{ fontSize: '0.82rem', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyBetween: 'space-between' }}>
-            <span>Max Retry Count Limit (&le; 3 retries):</span>
-            <span style={{ marginLeft: 'auto', fontWeight: 600, color: txn.retry_count >= 3 ? '#f87171' : '#34d399' }}>
-              {txn.retry_count}/3 {txn.retry_count >= 3 ? '❌ (Exceeded)' : '✓'}
+        <div style={{ fontSize: '0.8rem', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span style={{ color: 'var(--text-secondary)' }}>Max Retry Limit (&le; 3 retries):</span>
+            <span style={{ fontWeight: 600, color: txn.retry_count >= 3 ? '#E8546B' : '#2DD4A7' }}>
+              {txn.retry_count}/3 {txn.retry_count >= 3 ? '(Exceeded)' : '(Passed)'}
             </span>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', justifyBetween: 'space-between' }}>
-            <span>High-Value Threshold Approval (&lt; ₹15,000):</span>
-            <span style={{ marginLeft: 'auto', fontWeight: 600, color: txn.amount >= 15000 ? '#fbbf24' : '#34d399' }}>
-              ₹{txn.amount.toLocaleString('en-IN')} {txn.amount >= 15000 ? '⚠️ (Human Approval)' : '✓'}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span style={{ color: 'var(--text-secondary)' }}>High-Value Threshold (&lt; ₹15,000):</span>
+            <span style={{ fontWeight: 600, color: txn.amount >= 15000 ? '#E8A23D' : '#2DD4A7' }}>
+              ₹{txn.amount.toLocaleString('en-IN')} {txn.amount >= 15000 ? '(Requires Review)' : '(Passed)'}
             </span>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', justifyBetween: 'space-between' }}>
-            <span>Fraud & Velocity Abuse Filter:</span>
-            <span style={{ marginLeft: 'auto', fontWeight: 600, color: txn.risk_score > 0.7 ? '#f87171' : '#34d399' }}>
-              {txn.risk_score > 0.7 ? '❌ Flagged Risk' : '✓ Clean'}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span style={{ color: 'var(--text-secondary)' }}>Fraud & Velocity Filter:</span>
+            <span style={{ fontWeight: 600, color: txn.risk_score > 0.7 ? '#E8546B' : '#2DD4A7' }}>
+              {txn.risk_score > 0.7 ? 'Flagged Risk' : 'Clean'}
             </span>
           </div>
         </div>
 
         {evalRes.override_reason && (
-          <div style={{ marginTop: '12px', paddingTop: '10px', borderTop: '1px solid var(--border-color)', fontSize: '0.78rem', color: '#fcd34d' }}>
-            ⚠️ <strong>Policy Alert:</strong> {evalRes.override_reason}
+          <div style={{ marginTop: '12px', paddingTop: '10px', borderTop: '1px solid var(--border-subtle)', fontSize: '0.78rem', color: '#E8A23D' }}>
+            <strong>Policy Flag:</strong> {evalRes.override_reason}
           </div>
         )}
       </div>
 
-      {/* Razorpay Action Trigger / Execution Result */}
-      <div className="glass-panel p-4 mb-5" style={{ marginBottom: '20px' }}>
-        <h4 style={{ fontSize: '0.9rem', fontWeight: 700, color: '#fff', marginBottom: '12px' }}>
-          ⚡ Razorpay Recovery Execution
+      <div className="fintech-card" style={{ padding: '18px', marginBottom: '20px' }}>
+        <h4 style={{ fontSize: '0.85rem', fontWeight: 700, color: '#E8EAED', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <Zap size={15} color="#2DD4A7" /> Razorpay Recovery Execution
         </h4>
 
         {execution ? (
-          <div style={{ background: 'rgba(16, 185, 129, 0.1)', border: '1px solid #10b981', borderRadius: '10px', padding: '12px' }}>
-            <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#34d399', marginBottom: '4px' }}>
+          <div style={{ background: 'rgba(45, 212, 167, 0.08)', border: '1px solid #2DD4A7', borderRadius: '6px', padding: '12px' }}>
+            <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#2DD4A7', marginBottom: '4px' }}>
               Action Executed: {execution.action_executed}
             </div>
-            <p style={{ fontSize: '0.8rem', color: '#e2e8f0', marginBottom: '8px' }}>
+            <p style={{ fontSize: '0.78rem', color: '#E8EAED', marginBottom: '8px' }}>
               {execution.message}
             </p>
             {execution.razorpay_details?.short_url && (
@@ -196,7 +190,7 @@ export default function ExplainabilityDrawer({ transactionDetail, onClose, onExe
                 href={execution.razorpay_details.short_url}
                 target="_blank"
                 rel="noreferrer"
-                style={{ fontSize: '0.8rem', color: '#60a5fa', display: 'inline-flex', alignItems: 'center', gap: '4px', wordBreak: 'break-all' }}
+                style={{ fontSize: '0.78rem', color: '#38BDF8', display: 'inline-flex', alignItems: 'center', gap: '4px', wordBreak: 'break-all' }}
               >
                 Razorpay Test Link: {execution.razorpay_details.short_url} <ExternalLink size={12} />
               </a>
@@ -207,32 +201,31 @@ export default function ExplainabilityDrawer({ transactionDetail, onClose, onExe
             onClick={handleExecute}
             disabled={isExecuting}
             className="btn-primary"
-            style={{ width: '100%', justifyContent: 'center' }}
+            style={{ width: '100%', justifyContent: 'center', padding: '10px' }}
           >
-            {isExecuting ? <RefreshCw className="animate-spin" size={16} /> : <Zap size={16} />}
+            {isExecuting ? <RefreshCw className="animate-spin" size={15} /> : <Zap size={15} />}
             Execute {evalRes.final_action} via Razorpay Test Mode
           </button>
         )}
       </div>
 
-      {/* Human Override Controls */}
-      <form onSubmit={handleOverrideSubmit} className="glass-panel p-4" style={{ marginTop: 'auto' }}>
-        <h4 style={{ fontSize: '0.85rem', fontWeight: 700, color: '#fff', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <UserCheck size={16} color="#3b82f6" /> Human Manager Intervention Override
+      <form onSubmit={handleOverrideSubmit} className="fintech-card" style={{ padding: '18px', marginTop: 'auto' }}>
+        <h4 style={{ fontSize: '0.82rem', fontWeight: 700, color: '#E8EAED', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <UserCheck size={15} color="#2DD4A7" /> Manager Manual Override
         </h4>
         
-        <div style={{ display: 'flex', gap: '8px', marginBottom: '10px' }}>
+        <div style={{ display: 'flex', gap: '8px' }}>
           <select
             value={overrideAction}
             onChange={(e) => setOverrideAction(e.target.value)}
             style={{
               flex: 1,
-              background: 'rgba(15, 23, 42, 0.8)',
-              border: '1px solid var(--border-color)',
-              borderRadius: '8px',
-              padding: '8px',
-              color: '#fff',
-              fontSize: '0.85rem'
+              background: '#0B0E14',
+              border: '1px solid var(--border-subtle)',
+              borderRadius: '6px',
+              padding: '8px 10px',
+              color: '#E8EAED',
+              fontSize: '0.82rem'
             }}
           >
             <option value="RETRY">Force RETRY</option>
@@ -241,7 +234,7 @@ export default function ExplainabilityDrawer({ transactionDetail, onClose, onExe
             <option value="STOP">Halt Retries (STOP)</option>
           </select>
           
-          <button type="submit" className="btn-secondary" style={{ fontSize: '0.8rem' }}>
+          <button type="submit" className="btn-secondary" style={{ fontSize: '0.78rem' }}>
             Override
           </button>
         </div>

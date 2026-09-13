@@ -4,10 +4,10 @@ from sklearn.ensemble import RandomForestClassifier
 from data_generator import generate_historical_data, ACTIONS
 
 ACTION_COSTS = {
-    'RETRY': 2.0,       # Gateway / processing retry cost
-    'REMINDER': 1.0,    # SMS / WhatsApp Payment link cost
-    'ESCALATE': 15.0,   # Agent phone / high-touch support cost
-    'STOP': 0.0         # Zero cost
+    'RETRY': 2.0,
+    'REMINDER': 1.0,
+    'ESCALATE': 15.0,
+    'STOP': 0.0
 }
 
 class DecisionEngine:
@@ -36,15 +36,11 @@ class DecisionEngine:
         self.is_trained = True
 
     def predict_recovery_probabilities(self, txn: dict) -> dict:
-        """
-        Calculates P(recovery) for each candidate action.
-        """
         if not self.is_trained:
             self.train()
 
         probs = {}
         for action in ACTIONS:
-            # Construct feature row assuming action_taken = action
             test_row = {
                 'amount': txn['amount'],
                 'retry_count': txn['retry_count'],
@@ -65,13 +61,11 @@ class DecisionEngine:
             numerical = df_single[['amount', 'retry_count', 'time_of_day', 'historical_ltv', 'risk_score']]
             X_full = pd.concat([numerical, X_single], axis=1)
 
-            # Align with trained feature columns
             for col in self.feature_columns:
                 if col not in X_full.columns:
                     X_full[col] = 0
             X_full = X_full[self.feature_columns]
 
-            # Domain override bounds
             if action == 'RETRY' and txn['failure_reason'] in ['CARD_EXPIRED', 'SUSPICIOUS_REPEATS']:
                 p = 0.0
             elif action == 'STOP':
@@ -85,10 +79,6 @@ class DecisionEngine:
         return probs
 
     def evaluate_transaction(self, txn: dict) -> dict:
-        """
-        Runs the full RECLAIM decision pipeline:
-        Diagnosis -> Recovery P(action) -> EV Calculation -> Policy Guardrails -> Final Selection & Explanation.
-        """
         probs = self.predict_recovery_probabilities(txn)
         amount = txn['amount']
         retries = txn['retry_count']
@@ -98,7 +88,6 @@ class DecisionEngine:
         for action in ACTIONS:
             p = probs[action]
             cost = ACTION_COSTS[action]
-            # Friction penalty for excessive retries
             penalty = (retries * 5.0) if action == 'RETRY' else 0.0
             expected_val = max(0.0, (p * amount) - cost - penalty)
             ev_breakdown[action] = {
@@ -108,41 +97,33 @@ class DecisionEngine:
                 'expected_value': round(expected_val, 2)
             }
 
-        # Find action with maximum raw Expected Value
         raw_best_action = max(ev_breakdown.keys(), key=lambda a: ev_breakdown[a]['expected_value'])
 
-        # Policy & Guardrail Enforcement
         guardrail_status = 'PASSED'
         override_reason = None
         final_action = raw_best_action
         requires_human_approval = False
 
-        # Guardrail 1: Max retry limit (Max 3)
         if raw_best_action == 'RETRY' and retries >= 3:
             guardrail_status = 'BLOCKED_MAX_RETRIES'
             override_reason = f"Max retries limit reached ({retries}/3). RETRY blocked by policy."
-            # Fallback to next best non-retry action
             remaining_actions = [a for a in ACTIONS if a != 'RETRY']
             final_action = max(remaining_actions, key=lambda a: ev_breakdown[a]['expected_value'])
 
-        # Guardrail 2: High Value Transaction approval threshold (> ₹15,000)
         if amount >= 15000:
             requires_human_approval = True
             if guardrail_status == 'PASSED':
                 guardrail_status = 'HIGH_VALUE_HUMAN_REVIEW'
                 override_reason = f"Transaction amount (₹{amount:,.0f}) exceeds automatic execution threshold (₹15,000). Escalating for human review."
 
-        # Guardrail 3: High Risk Score / Abuse Flag
         if risk > 0.70 or txn['failure_reason'] == 'SUSPICIOUS_REPEATS':
             final_action = 'STOP' if risk > 0.85 else 'ESCALATE'
             guardrail_status = 'SECURITY_GUARDRAIL_OVERRIDE'
             override_reason = f"Elevated risk score ({risk}) or velocity concern. Automatic retry halted."
             requires_human_approval = True
 
-        # Diagnosis Summary
         diagnosis = self.diagnose_cause(txn['failure_reason'], txn['issuing_bank'], txn['payment_method'])
 
-        # Explainable Reasoning Narrative
         best_ev = ev_breakdown[final_action]['expected_value']
         best_p = probs[final_action]
         reasoning = (

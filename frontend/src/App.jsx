@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Play, RefreshCw, Shield, Zap, ExternalLink, Activity, CheckCircle, Database } from 'lucide-react';
+import { Play, RefreshCw, Zap, Activity, Database, LayoutDashboard } from 'lucide-react';
 import MetricsOverview from './components/MetricsOverview';
 import AnalyticsCharts from './components/AnalyticsCharts';
 import TransactionTable from './components/TransactionTable';
@@ -15,7 +15,7 @@ export default function App() {
   const [selectedTxnId, setSelectedTxnId] = useState(null);
   const [transactionDetail, setTransactionDetail] = useState(null);
   const [isBatchRunning, setIsBatchRunning] = useState(false);
-  const [activeTab, setActiveTab] = useState('EXPLORER'); // EXPLORER | SIMULATOR
+  const [activeTab, setActiveTab] = useState('EXPLORER');
 
   const fetchStats = async () => {
     try {
@@ -122,51 +122,46 @@ export default function App() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', padding: '24px 32px', maxWidth: '1440px', margin: '0 auto' }}>
+    <div style={{ minHeight: '100vh', padding: '36px 48px', maxWidth: '1480px', margin: '0 auto' }}>
       
-      {/* Header Bar */}
       <header style={{
         display: 'flex',
         flexWrap: 'wrap',
         justifyContent: 'space-between',
         alignItems: 'center',
-        gap: '16px',
-        marginBottom: '28px',
-        paddingBottom: '20px',
-        borderBottom: '1px solid var(--border-color)'
+        gap: '24px',
+        marginBottom: '36px',
+        paddingBottom: '24px',
+        borderBottom: '1px solid #4A3F2E'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <div style={{
-            width: '46px',
-            height: '46px',
-            borderRadius: '12px',
-            background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)',
+            width: '44px',
+            height: '44px',
+            borderRadius: '6px',
+            background: 'rgba(125, 216, 232, 0.08)',
+            border: '1px solid rgba(125, 216, 232, 0.3)',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
-            boxShadow: '0 0 20px rgba(59, 130, 246, 0.4)'
+            justifyContent: 'center'
           }}>
-            <Zap size={26} color="#fff" />
+            <Zap size={22} color="#7DD8E8" />
           </div>
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <h1 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#fff', letterSpacing: '-0.02em' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <h1 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#EDE8DD', letterSpacing: '-0.02em' }} className="font-serif">
                 RECLAIM
               </h1>
-              <span className="badge" style={{ background: 'rgba(59, 130, 246, 0.15)', color: '#60a5fa', border: '1px solid rgba(59, 130, 246, 0.3)' }}>
-                Track 3 — AI Revenue Recovery
-              </span>
             </div>
-            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-              Risk-Aware Expected-Value Revenue Recovery & Intervention Engine
+            <p style={{ fontSize: '0.83rem', color: '#A39B8B', marginTop: '3px' }}>
+              Risk-Aware Expected-Value Revenue Recovery Instrument
             </p>
           </div>
         </div>
 
-        {/* Action Controls & Status */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
           
-          <div className="badge badge-passed">
+          <div className="badge badge-reminder" style={{ padding: '6px 12px' }}>
             <div className="pulse-dot" /> Razorpay Test Mode Active
           </div>
 
@@ -176,7 +171,7 @@ export default function App() {
             className="btn-primary"
           >
             {isBatchRunning ? <RefreshCw className="animate-spin" size={16} /> : <Play size={16} />}
-            {isBatchRunning ? 'Analyzing Batch...' : 'Run Engine Batch Analysis'}
+            {isBatchRunning ? 'Analyzing Batch...' : 'Run Batch Analysis'}
           </button>
 
           <button
@@ -184,61 +179,58 @@ export default function App() {
             className="btn-secondary"
             title="Generate new 300 synthetic at-risk dataset"
           >
-            <Database size={16} /> Reset Batch
+            <Database size={15} /> Reset Batch
           </button>
         </div>
       </header>
 
-      {/* Main Content Area */}
       <main>
-        {/* KPI Metrics */}
         <MetricsOverview stats={stats} />
 
-        {/* Visual Charts */}
         <AnalyticsCharts stats={stats} />
 
-        {/* Tab Navigation */}
-        <div style={{ display: 'flex', gap: '12px', marginTop: '28px', borderBottom: '1px solid var(--border-color)', paddingBottom: '12px' }}>
+        <div style={{ display: 'flex', gap: '12px', marginTop: '36px', borderBottom: '1px solid #4A3F2E', paddingBottom: '14px' }}>
           <button
             onClick={() => setActiveTab('EXPLORER')}
             style={{
-              background: activeTab === 'EXPLORER' ? 'rgba(59, 130, 246, 0.15)' : 'transparent',
-              border: activeTab === 'EXPLORER' ? '1px solid #3b82f6' : '1px solid transparent',
-              color: activeTab === 'EXPLORER' ? '#60a5fa' : 'var(--text-muted)',
-              padding: '8px 16px',
-              borderRadius: '8px',
+              background: activeTab === 'EXPLORER' ? 'rgba(232, 184, 74, 0.1)' : 'transparent',
+              border: activeTab === 'EXPLORER' ? '1px solid #E8B84A' : '1px solid transparent',
+              color: activeTab === 'EXPLORER' ? '#E8B84A' : '#A39B8B',
+              padding: '10px 18px',
+              borderRadius: '6px',
               fontWeight: 600,
-              fontSize: '0.875rem',
+              fontSize: '0.85rem',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              gap: '8px'
+              gap: '8px',
+              transition: 'all 0.15s ease'
             }}
           >
-            <Activity size={16} /> At-Risk Batch Explorer (300 Txns)
+            <LayoutDashboard size={15} /> At-Risk Batch Explorer (300 Txns)
           </button>
 
           <button
             onClick={() => setActiveTab('SIMULATOR')}
             style={{
-              background: activeTab === 'SIMULATOR' ? 'rgba(139, 92, 246, 0.15)' : 'transparent',
-              border: activeTab === 'SIMULATOR' ? '1px solid #8b5cf6' : '1px solid transparent',
-              color: activeTab === 'SIMULATOR' ? '#c084fc' : 'var(--text-muted)',
-              padding: '8px 16px',
-              borderRadius: '8px',
+              background: activeTab === 'SIMULATOR' ? 'rgba(125, 216, 232, 0.1)' : 'transparent',
+              border: activeTab === 'SIMULATOR' ? '1px solid #7DD8E8' : '1px solid transparent',
+              color: activeTab === 'SIMULATOR' ? '#7DD8E8' : '#A39B8B',
+              padding: '10px 18px',
+              borderRadius: '6px',
               fontWeight: 600,
-              fontSize: '0.875rem',
+              fontSize: '0.85rem',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              gap: '8px'
+              gap: '8px',
+              transition: 'all 0.15s ease'
             }}
           >
-            <Zap size={16} /> Counterfactual Recovery Simulator
+            <Activity size={15} color={activeTab === 'SIMULATOR' ? '#7DD8E8' : '#A39B8B'} /> Counterfactual Recovery Simulator
           </button>
         </div>
 
-        {/* Tab Content */}
         {activeTab === 'EXPLORER' ? (
           <TransactionTable
             transactions={transactions}
@@ -252,13 +244,13 @@ export default function App() {
               setCurrentPage(1);
             }}
             filters={filters}
+            guardrailFlagsCount={stats?.guardrail_overrides || 0}
           />
         ) : (
           <CounterfactualSimulator />
         )}
       </main>
 
-      {/* Explainability Drawer */}
       {selectedTxnId && (
         <ExplainabilityDrawer
           transactionDetail={transactionDetail}

@@ -24,11 +24,7 @@ class RazorpayRecoveryClient:
                 logger.warning(f"Failed to initialize Razorpay SDK client: {e}. Falling back to Test Mode simulator.")
 
     def create_payment_link(self, txn: dict, reasoning: str) -> dict:
-        """
-        Creates a Razorpay Payment Link for payment recovery.
-        Uses Razorpay SDK if configured, else returns official Razorpay Test Mode API payload structure.
-        """
-        amount_paisa = int(txn['amount'] * 100) # Razorpay expects amount in paisa
+        amount_paisa = int(txn['amount'] * 100)
         description = f"RECLAIM Payment Recovery for Order {txn['transaction_id']}"
         customer_name = txn.get('customer_name', f"Customer {txn['customer_id']}")
         customer_email = f"{txn['customer_id'].lower()}@example.com"
@@ -70,7 +66,6 @@ class RazorpayRecoveryClient:
             except Exception as e:
                 logger.error(f"Razorpay API call failed: {e}. Falling back to Test Mode payload generation.")
 
-        # Test Mode Simulated Razorpay API Payload Structure
         fake_id = f"plink_test_{txn['transaction_id'].replace('pay_', '')}_{int(time.time())}"
         fake_url = f"https://rzp.io/i/reclaim_test_{txn['transaction_id'].replace('pay_', '')}"
         
